@@ -1,25 +1,22 @@
 import { React, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { AiOutlineShopping } from 'react-icons/ai'
-import { MdManageSearch } from "react-icons/md";
 import { Cart } from './';
 import { useStateContext } from '../context/StateContext';
-import { GoogleLogin, googleLogout } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 import { createOrGetUser } from '@/lib/utils';
 import SearchBar from './SearchBar';
 
 const Navbar = () => {
-
   const { showCart, setShowCart, totalQuantities } = useStateContext();
-  const [user, setuser] = useState()
+  const [user, setUser] = useState()
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedData = localStorage.getItem('user');
-      setuser(JSON.parse(storedData))
+      setUser(JSON.parse(storedData))
     }
   }, []);
-
 
   return (
     <div className="navbar-container">
@@ -27,36 +24,28 @@ const Navbar = () => {
         <Link href="/">Audio Wave</Link>
       </p>
 
-      <a href='/trending'>Trending</a>
-      <a href='/trending'>Wishlist</a>
+      <Link href="/trending">Trending</Link>
+      <Link href="/wishlist">Wishlist</Link>
       <SearchBar/>
-        
-
 
       <div>
-        { user ? (
-          // <div> <a href='/profile'> User Profile</a> </div>
-          <div class="dropdown">
-  <button class="dropbtn">{user?.given_name}</button>
-  <div class="dropdown-content">
-    <a href="user-profile">My Profile</a>
-    <a href="orders">Orders</a>
-    <a href="whishlist">Wishlist</a>
-    <a href='/'>Logout</a>
-  </div>
-</div>
-        ):
-        <GoogleLogin
-        onSuccess={(response) => createOrGetUser(response)}
-        onError={() => console.log('error')}
-        />
-
-        
-        }
+        {user ? (
+          <div className="dropdown">
+            <button className="dropbtn">{user?.given_name}</button>
+            <div className="dropdown-content">
+              <Link href="/user-profile">My Profile</Link>
+              <Link href="/orders">Orders</Link>
+              <Link href="/wishlist">Wishlist</Link>
+              <Link href="/">Logout</Link>
+            </div>
+          </div>
+        ) : (
+          <GoogleLogin
+            onSuccess={(response) => createOrGetUser(response)}
+            onError={() => console.log('error')}
+          />
+        )}
       </div>
-
-
-
 
       <button type="button" className="cart-icon" onClick={() => setShowCart(true)}>
         <AiOutlineShopping />
